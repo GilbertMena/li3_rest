@@ -69,32 +69,39 @@ class Resource extends \lithium\core\Object {
 	 */
 	protected static $_types = array(
 		'index' => array(
-			'template' => '/{:resource}(.{:type:\w+})*',
-			'params' => array('http:method' => 'GET')
+			'template' => '/{:resource}',
+			'params' => array('http:method' => 'GET'),
+			            'type_support' => true
 		),
 		'show' => array(
-			'template' => '/{:resource}/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*',
-			'params' => array('http:method' => 'GET')
+			'template' => '/{:resource}/{:id:[0-9a-f]{24}|[0-9]+}',
+			'params' => array('http:method' => 'GET'),
+			            'type_support' => true
+
 		),
 		'add' => array(
 			'template' => '/{:resource}/add',
 			'params' => array('http:method' => 'GET')
 		),
 		'create' => array(
-			'template' => '/{:resource}(.{:type:\w+})*',
-			'params' => array('http:method' => 'POST')
+			'template' => '/{:resource}',
+			'params' => array('http:method' => 'POST'),
+                    'type_support' => true
 		),
+
 		'edit' => array(
 			'template' => '/{:resource}/{:id:[0-9a-f]{24}|[0-9]+}/edit',
 			'params' => array('http:method' => 'GET')
 		),
 		'update' => array(
-			'template' => '/{:resource}/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*',
-			'params' => array('http:method' => 'PUT')
+			'template' => '/{:resource}/{:id:[0-9a-f]{24}|[0-9]+}',
+			'params' => array('http:method' => 'PUT') ,
+			            'type_support' => true
 		),
 		'delete' => array(
-			'template' => '/{:resource}/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*',
-			'params' => array('http:method' => 'DELETE')
+			'template' => '/{:resource}/{:id:[0-9a-f]{24}|[0-9]+}',
+			'params' => array('http:method' => 'DELETE'),
+			            'type_support' => true
 		)
 	);
 
@@ -125,13 +132,32 @@ class Resource extends \lithium\core\Object {
 			$types = $options['types'] + $types;
 		}
 
+        if(isset($options['except'])) {
+            foreach(array_intersect($options['except'],array_keys($types)) as $k) {
+                unset($types[$k]);
+            }
+        }
+
+        if(isset($options['only'])) {
+            foreach(array_keys($types) as $k) {
+                if (!in_array($k, $options['only'])) unset($types[$k]);
+            }
+        }
+
 		$routes = array();
-		foreach(static::$_types as $action => $params) {
+		foreach($types as $action => $params) {
 			$config = array(
 				'template' => String::insert($params['template'], array('resource' => $resource)),
-				'params' => $params['params'] + array('controller' => $resource, 'action' => $action),
+				'params' => $params['params'] + array('controller' => $resource, 'action' => isset($params['action']) ? $params['action'] : $action),
 			);
 			$routes[] = new $class($config);
+            if (isset($params['type_support']) && $params['type_support']) {
+                $config = array(
+                    'template' => String::insert($params['template'].'.{:type}', array('resource' => $resource)),
+                    'params' => $params['params'] + array('controller' => $resource, 'action' => isset($params['action']) ? $params['action'] : $action),
+                );
+                $routes[] = new $class($config);
+            }
 		}
 
 		return $routes;
