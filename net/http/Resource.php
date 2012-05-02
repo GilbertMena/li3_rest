@@ -126,6 +126,7 @@ class Resource extends \lithium\core\Object {
 	public static function connect($resource, $options = array()) {
 		$resource = Inflector::tableize($resource);
 		$class = static::$_classes['route'];
+        $scope  = isset($options['scope']) ? $options['scope'] : '';
 
 		$types = static::$_types;
 		if(isset($options['types'])) {
@@ -147,13 +148,13 @@ class Resource extends \lithium\core\Object {
 		$routes = array();
 		foreach($types as $action => $params) {
 			$config = array(
-				'template' => String::insert($params['template'], array('resource' => $resource)),
+				'template' => $scope.String::insert($params['template'], array('resource' => $resource)),
 				'params' => $params['params'] + array('controller' => $resource, 'action' => isset($params['action']) ? $params['action'] : $action),
 			);
 			$routes[] = new $class($config);
             if (isset($params['type_support']) && $params['type_support']) {
                 $config = array(
-                    'template' => String::insert($params['template'].'.{:type}', array('resource' => $resource)),
+                    'template' => $scope.String::insert($params['template'].'.{:type}', array('resource' => $resource)),
                     'params' => $params['params'] + array('controller' => $resource, 'action' => isset($params['action']) ? $params['action'] : $action),
                 );
                 $routes[] = new $class($config);
