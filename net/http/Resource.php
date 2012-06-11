@@ -77,7 +77,6 @@ class Resource extends \lithium\core\Object {
 			'template' => '/{:resource}/{:id:[0-9a-f]{24}|[0-9]+}',
 			'params' => array('http:method' => 'GET'),
 			            'type_support' => true
-
 		),
 		'add' => array(
 			'template' => '/{:resource}/add',
@@ -124,8 +123,9 @@ class Resource extends \lithium\core\Object {
 	 * Connect a resource to the `Router`.
 	 */
 	public static function connect($resource, $options = array()) {
-		$resource = Inflector::tableize($resource);
-		$class = static::$_classes['route'];
+        $ctrl = $resource;
+        $resource = Inflector::tableize($resource);
+        $class = static::$_classes['route'];
         $scope  = isset($options['scope']) ? $options['scope'] : '';
 
 		$types = static::$_types;
@@ -149,13 +149,13 @@ class Resource extends \lithium\core\Object {
 		foreach($types as $action => $params) {
 			$config = array(
 				'template' => $scope.String::insert($params['template'], array('resource' => $resource)),
-				'params' => $params['params'] + array('controller' => $resource, 'action' => isset($params['action']) ? $params['action'] : $action),
+				'params' => $params['params'] + array('controller' => $ctrl, 'action' => isset($params['action']) ? $params['action'] : $action),
 			);
 			$routes[] = new $class($config);
             if (isset($params['type_support']) && $params['type_support']) {
                 $config = array(
                     'template' => $scope.String::insert($params['template'].'.{:type}', array('resource' => $resource)),
-                    'params' => $params['params'] + array('controller' => $resource, 'action' => isset($params['action']) ? $params['action'] : $action),
+                    'params' => $params['params'] + array('controller' => $ctrl, 'action' => isset($params['action']) ? $params['action'] : $action),
                 );
                 $routes[] = new $class($config);
             }
