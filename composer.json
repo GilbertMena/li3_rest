@@ -1,0 +1,15 @@
+{
+    "name": "mdx-dev/li3_rest",
+    "type": "li3-libraries",
+    "description": "Adds REST support in Lithium PHP",
+    "keywords": ["rest", "routing", "lithium", "li3"],
+    "homepage": "https://github.com/mdx-dev/li3_rest/blob/master/README.md",
+    "license": "MIT License",
+    "authors": [],
+ 
+    "require": {
+        "php": ">=5.3",
+        "joseym/li3_installer": "master"
+    }
+ 
+}
