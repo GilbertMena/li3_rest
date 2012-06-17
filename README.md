@@ -39,12 +39,12 @@ If you want to add a `Posts` resource, add the following to `app/config/routes.p
 This will generate a bunch of routes. If you want to list them, you can use the `li3 route` command:
 
 	/posts(.{:type:\w+})*                               	{"controller":"posts","action":"index"}
-	/posts/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*        	{"controller":"posts","action":"show"}
+	/posts/{:id:[0-9a-zA-Z\-_\.]+}(.{:type:\w+})*        	{"controller":"posts","action":"show"}
 	/posts/add                          	                {"controller":"posts","action":"add"}
 	/posts(.{:type:\w+})*                            	    {"controller":"posts","action":"create"}
-	/posts/{:id:[0-9a-f]{24}|[0-9]+}/edit	                {"controller":"posts","action":"edit"}
-	/posts/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*       	{"controller":"posts","action":"update"}
-	/posts/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*       	{"controller":"posts","action":"delete"}
+	/posts/{:id:[0-9a-zA-Z\-_\.]+}/edit	                {"controller":"posts","action":"edit"}
+	/posts/{:id:[0-9a-zA-Z\-_\.]+}(.{:type:\w+})*       	{"controller":"posts","action":"update"}
+	/posts/{:id:[0-9a-zA-Z\-_\.]+}(.{:type:\w+})*       	{"controller":"posts","action":"delete"}
  
 This routes look complex in the first place, but they try to be as flexible as possible. You can pass 
 all default ids (both MongoDB and for relational databases) and always an optional type (like `json`).
