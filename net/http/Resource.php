@@ -71,12 +71,12 @@ class Resource extends \lithium\core\Object {
 		'index' => array(
 			'template' => '/{:resource}',
 			'params' => array('http:method' => 'GET'),
-			            'type_support' => true
+			'type_support' => true
 		),
 		'show' => array(
-			'template' => '/{:resource}/{:id:[0-9a-zA-Z\-_\.]+}',
+			'template' => '/{:resource}/{:id:[0-9a-zA-Z\-_]+}',
 			'params' => array('http:method' => 'GET'),
-			            'type_support' => true
+			'type_support' => true
 		),
 		'add' => array(
 			'template' => '/{:resource}/add',
@@ -85,22 +85,21 @@ class Resource extends \lithium\core\Object {
 		'create' => array(
 			'template' => '/{:resource}',
 			'params' => array('http:method' => 'POST'),
-                    'type_support' => true
+			'type_support' => true
 		),
-
 		'edit' => array(
-			'template' => '/{:resource}/{:id:[0-9a-zA-Z\-_\.]+}/edit',
+			'template' => '/{:resource}/{:id:[0-9a-zA-Z\-_]+}/edit',
 			'params' => array('http:method' => 'GET')
 		),
 		'update' => array(
-			'template' => '/{:resource}/{:id:[0-9a-zA-Z\-_\.]+}',
+			'template' => '/{:resource}/{:id:[0-9a-zA-Z\-_]+}',
 			'params' => array('http:method' => 'PUT') ,
-			            'type_support' => true
+			'type_support' => true
 		),
 		'delete' => array(
-			'template' => '/{:resource}/{:id:[0-9a-zA-Z\-_\.]+}',
+			'template' => '/{:resource}/{:id:[0-9a-zA-Z\-_]+}',
 			'params' => array('http:method' => 'DELETE'),
-			            'type_support' => true
+			'type_support' => true
 		)
 	);
 
@@ -154,7 +153,7 @@ class Resource extends \lithium\core\Object {
 			$routes[] = new $class($config);
             if (isset($params['type_support']) && $params['type_support']) {
                 $config = array(
-                    'template' => $scope.String::insert($params['template'].'.{:type}', array('resource' => $resource)),
+                    'template' => $scope.String::insert($params['template'].'(.{:type:\w+})*', array('resource' => $resource)),
                     'params' => $params['params'] + array('controller' => $ctrl, 'action' => isset($params['action']) ? $params['action'] : $action),
                 );
                 $routes[] = new $class($config);
