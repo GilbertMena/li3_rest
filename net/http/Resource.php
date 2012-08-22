@@ -123,7 +123,7 @@ class Resource extends \lithium\core\Object {
 	 */
 	public static function connect($resource, $options = array()) {
         $ctrl = $resource;
-        $resource = Inflector::tableize($resource);
+        $resource = strtolower(Inflector::slug($resource));
         $class = static::$_classes['route'];
         $scope  = isset($options['scope']) ? $options['scope'] : '';
 
