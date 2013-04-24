@@ -116,7 +116,7 @@ class Resource extends \lithium\core\Object {
 	/**
 	 * Connect a resource to the `Router`.
 	 */
-	public static function connect($resource, $options = array()) {
+	public static function bind($resource, $options = array()) {
 		$resource = Inflector::tableize($resource);
 		$class = static::$_classes['route'];
 
