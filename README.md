@@ -38,13 +38,13 @@ If you want to add a `Posts` resource, add the following to `app/config/routes.p
 
 This will generate a bunch of routes. If you want to list them, you can use the `li3 route` command:
 
-	/posts(.{:type:\w+})*                               	{"controller":"posts","action":"index"}
-	/posts/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*        	{"controller":"posts","action":"show"}
-	/posts/add                          	                {"controller":"posts","action":"add"}
-	/posts(.{:type:\w+})*                            	    {"controller":"posts","action":"create"}
-	/posts/{:id:[0-9a-f]{24}|[0-9]+}/edit	                {"controller":"posts","action":"edit"}
-	/posts/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*       	{"controller":"posts","action":"update"}
-	/posts/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*       	{"controller":"posts","action":"delete"}
+	/posts(/v{:version:\d+(\.\d+)?})?(.{:type:\w+})*        {"controller":"posts","action":"index"}
+	/posts(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})* {controller":"posts","action":"show"}
+	/posts(/v{:version:\d+(\.\d+)?})?/add                   {"controller":"posts","action":"add"}
+	/posts(/v{:version:\d+(\.\d+)?})?(.{:type:\w+})*        {"controller":"posts","action":"create"}
+	/posts(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}/edit        {"controller":"posts","action":"edit"}
+	/posts(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})* {"controller":"posts","action":"update"}
+	/posts(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})* {"controller":"posts","action":"delete"}
  
 This routes look complex in the first place, but they try to be as flexible as possible. You can pass 
 all default ids (both MongoDB and for relational databases) and always an optional type (like `json`).
@@ -57,6 +57,11 @@ With the default resource activated, you can use the following URIs.
 	GET /posts/1234/edit => Edit the post with the ID 1234 (maybe a HTML form)
 	PUT /posts/1234 or /posts/1234.json => Edit the post with the ID 1234 (has the form data attached)
 	DELETE /posts/1234 or /posts/1234.json => Deletes the post with the ID 1234
+	
+Using versioning in the request:
+You can request using v1 or v1.0 right after the resource name and it will pass the number as the parameter version
+
+	GET /posts/v1 or /posts/v1.0 or /posts/v1.json or /posts/v1.0.json => Show a list of available posts
 
 Note: as this plugin is currently in the making, I'll add more documentation as soon as the api and generated 
 routes have stableized.
