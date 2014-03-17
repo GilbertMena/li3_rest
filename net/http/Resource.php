@@ -231,7 +231,7 @@ Dispatcher::applyFilter('_call', function($self, $params, $chain) {
     }
     if(isset($params['params']['version']))
     {
-        if(is_numeric($params['params']['version']))
+        if(is_numeric($params['params']['version'])&&$params['params']['version']!==0)
         {
             $params['params']['action'] .= '_'.str_replace('.','_',$params['params']['version']);
         }
