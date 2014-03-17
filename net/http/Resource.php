@@ -88,31 +88,31 @@ class Resource extends \lithium\core\StaticObject {
 	 */
 	protected static $_types = array(
 		'index' => array(
-			'template' => '/{:resource}',
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?(.{:type:\w+})?', //
 			'params' => array('http:method' => 'GET')
 		),
 		'show' => array(
-			'template' => '/{:resource}/{:id:[0-9a-f]{24}|[0-9]+}',
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})?',
 			'params' => array('http:method' => 'GET')
 		),
 		'add' => array(
-			'template' => '/{:resource}/add',
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/add(.{:type:\w+})?',
 			'params' => array('http:method' => 'GET')
 		),
 		'create' => array(
-			'template' => '/{:resource}',
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?(.{:type:\w+})?',
 			'params' => array('http:method' => 'POST')
 		),
 		'edit' => array(
-			'template' => '/{:resource}/{:id:[0-9a-f]{24}|[0-9]+}/edit',
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}/edit(.{:type:\w+})?',
 			'params' => array('http:method' => 'GET')
 		),
 		'update' => array(
-			'template' => '/{:resource}/{:id:[0-9a-f]{24}|[0-9]+}',
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})?',
 			'params' => array('http:method' => 'PUT')
 		),
 		'delete' => array(
-			'template' => '/{:resource}/{:id:[0-9a-f]{24}|[0-9]+}',
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})?',
 			'params' => array('http:method' => 'DELETE')
 		)
 	);
