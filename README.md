@@ -32,6 +32,8 @@ If you want to add a `resource`, you have to call the `Router::resource()` metho
 The first param is the name of the `resource` (which has great impact on the routes generated), the second 
 one is an array of options that will optionally override the default settings.
 
+It's important to remember that any singular resource name is converted to plural so use plural resource names for your controller names.
+
 If you want to add a `Posts` resource, add the following to `app/config/routes.php`:
 
 	Router::resource('Posts');
