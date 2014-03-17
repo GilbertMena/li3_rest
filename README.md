@@ -70,6 +70,8 @@ The versions are dynamically converted to matching action names in your controll
 	GET /posts/v1 or /posts/v1.0 or /posts/v1.json or /posts/v1.0.json => index_1
 	GET  /posts/v1.0  or /posts/v1.0.json => index_1_0
 	
+If the version is not passed and you don't version any methods, it will default to normal action/method name.
+
 If version is ommitted from the resource request, it will parse all the method/action names adn execute the latest version (highest version number).  
 
 Note: as this plugin is currently in the making, I'll add more documentation as soon as the api and generated 
