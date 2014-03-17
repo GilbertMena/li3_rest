@@ -10,7 +10,7 @@ namespace li3_rest\net\http;
 
 use lithium\util\Inflector;
 use lithium\util\String;
-
+use lithium\action\Dispatcher;
 /**
  * The `Resource` class enables RESTful routing in Lithium.
  *
@@ -174,5 +174,72 @@ class Resource extends \lithium\core\StaticObject {
 		return $configs;
 	}
 }
+
+Dispatcher::applyFilter('_callable', function($self, $params, $chain) {
+
+    $params['params']['originalAction'] = $params['params']['action'];
+    
+    
+    $ctrl    = $chain->next($self, $params, $chain);
+    //print_r($ctrl);exit;
+    $methodNames = get_class_methods($ctrl);
+    $a = preg_grep("/".$params['params']['originalAction']."(_d+)?/",$methodNames);
+    //print_r($a);exit;
+    if(!isset($params['request']->params['version']))
+    {
+        foreach($a as $key => $version)
+        {
+            $underPosition = strpos($version,'_');
+            if($underPosition!==false)
+            {
+                $underPosition++;
+            }else
+            {
+                $a[$key] = 0;
+                continue;
+            }
+            $a[$key] = str_replace('_','.',substr($version,$underPosition));
+        }
+    
+        $latestVersion = max($a);
+
+        $ctrl->request->params['version'] = $latestVersion;
+    }else
+    {
+        if(!in_array($params['params']['action'],$methodNames))
+        {
+            //version requested does not exist
+            //TODO: return error response
+        }
+    }
+
+   return $ctrl;
+   
+});
+
+Dispatcher::applyFilter('_call', function($self, $params, $chain) {
+
+     if(!isset($params['params']['version']))
+    {
+         if(isset($params['callable']->request->params['version']))
+        {
+            if(is_numeric($params['callable']->request->params['version']))
+            {
+                $params['params']['version'] = $params['callable']->request->params['version'];
+            }
+         }
+    }
+    if(isset($params['params']['version']))
+    {
+        if(is_numeric($params['params']['version']))
+        {
+            $params['params']['action'] .= '_'.str_replace('.','_',$params['params']['version']);
+        }
+    }
+    
+    $ctrl    = $chain->next($self, $params, $chain);
+   return $ctrl;
+   
+});
 
 ?>
