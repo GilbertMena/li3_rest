@@ -86,7 +86,11 @@ You will get a route like this:
 	
 Note that the above route passes the variable post_id in addition to id to the "edit" action of the "comment" controller.
 
+The equivalent of the above call with versioning is:
 
+	/post/{:post_id:[0-9a-f]{24}|[0-9]+}/comment/v1/{:id:[0-9a-f]{24}|[0-9]+}/edit  {"controller":"comment","action":"edit_1"}
+
+The thing to remember is that you're versioning the action in the controller (which controls the interface of the call) so the first parameter (post_id) does not need versioning.  This is there for readability ease and nothing more since the passing of linked data can be accomplished in the data passed into the call.
 
 ## Contributing
 Feel free to fork the plugin and send in pull requests. If you find any bugs or need a feature that is not implemented, open a ticket.
