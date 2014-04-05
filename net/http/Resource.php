@@ -88,7 +88,7 @@ class Resource extends \lithium\core\StaticObject {
 	 */
 	protected static $_types = array(
 		'index' => array(
-			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?', //
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?', 
 			'params' => array('http:method' => 'GET'),
 			'type_support' => true
 		),
@@ -156,7 +156,7 @@ class Resource extends \lithium\core\StaticObject {
         $splitCount = count($resources);
         
         $class = static::$_classes['route'];
-        $scope  = isset($options['scope']) ? $options['scope'] : '';
+        $scope  = isset($options['scope']) ? '(/{:scope:'.strtolower($options['scope']).'})' : '';
         
         if($splitCount>1)
         {
@@ -210,7 +210,6 @@ class Resource extends \lithium\core\StaticObject {
             }
 
 		}
-
 		return $configs;
 	}
 }
