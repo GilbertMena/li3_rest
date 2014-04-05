@@ -27,13 +27,13 @@ use lithium\action\Dispatcher;
  * This will automatically generate this CRUD routes for you (output similar to `li3 route`):
  *
  * {{{
- * /posts                                   {"controller":"posts","action":"index"}
- * /posts/{:id:[0-9a-f]{24}|[0-9]+}         {"controller":"posts","action":"show"}
- * /posts/add                               {"controller":"posts","action":"add"}
- * /posts                                   {"controller":"posts","action":"create"}
- * /posts/{:id:[0-9a-f]{24}|[0-9]+}/edit    {"controller":"posts","action":"edit"}
- * /posts/{:id:[0-9a-f]{24}|[0-9]+}         {"controller":"posts","action":"update"}
- * /posts/{:id:[0-9a-f]{24}|[0-9]+}         {"controller":"posts","action":"delete"}
+ * /posts(.{:type:\w+})*                               	    {"controller":"posts","action":"index"}
+ * /posts/{:id:[0-9a-zA-Z\-_\.]+}(.{:type:\w+})*        	{"controller":"posts","action":"show"}
+ * /posts/add                          	                    {"controller":"posts","action":"add"}
+ * /posts(.{:type:\w+})*                            	    {"controller":"posts","action":"create"}
+ * /posts/{:id:[0-9a-zA-Z\-_\.]+}/edit	                {"controller":"posts","action":"edit"}
+ * /posts/{:id:[0-9a-zA-Z\-_\.]+}(.{:type:\w+})*       	{"controller":"posts","action":"update"}
+ * /posts/{:id:[0-9a-zA-Z\-_\.]+}(.{:type:\w+})*       	{"controller":"posts","action":"delete"}
  * }}}
  *
  * This routes look complex in the first place, but they try to be as flexible as possible. You can pass
@@ -88,36 +88,43 @@ class Resource extends \lithium\core\StaticObject {
 	 */
 	protected static $_types = array(
 		'index' => array(
-			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?(.{:type:\w+})?', //
-			'params' => array('http:method' => 'GET')
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?', //
+			'params' => array('http:method' => 'GET'),
+			'type_support' => true
 		),
 		'show' => array(
-			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})?',
-			'params' => array('http:method' => 'GET')
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-zA-Z\-_]+}',
+			'params' => array('http:method' => 'GET'),
+			'type_support' => true
 		),
 		'add' => array(
-			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/add(.{:type:\w+})?',
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/add',
 			'params' => array('http:method' => 'GET')
 		),
 		'create' => array(
-			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?(.{:type:\w+})?',
-			'params' => array('http:method' => 'POST')
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?',
+			'params' => array('http:method' => 'POST'),
+			'type_support' => true
 		),
 		'edit' => array(
-			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}/edit(.{:type:\w+})?',
-			'params' => array('http:method' => 'GET')
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-zA-Z\-_]+}/edit',
+			'params' => array('http:method' => 'GET'),
+			'type_support' => true
 		),
 		'update' => array(
-			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})?',
-			'params' => array('http:method' => 'PUT')
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-zA-Z\-_]+}',
+			'params' => array('http:method' => 'PUT'),
+			'type_support' => true
 		),
 		'delete' => array(
-			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})?',
-			'params' => array('http:method' => 'DELETE')
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-zA-Z\-_]+}',
+			'params' => array('http:method' => 'DELETE'),
+			'type_support' => true
 		),
 		'bulk' => array(
-			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/bulk(.{:type:\w+})?',
-			'params' => array('http:method' => 'POST')
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/bulk',
+			'params' => array('http:method' => 'POST'),
+			'type_support' => true
 		)
 	);
 
@@ -144,10 +151,13 @@ class Resource extends \lithium\core\StaticObject {
 	 * @param string $resource The name of the resource
 	 * @param array $options
 	 */
-
 	public static function bind($resource, $options = array()) {
 		$resources = explode('/', $resource);
         $splitCount = count($resources);
+        
+        $class = static::$_classes['route'];
+        $scope  = isset($options['scope']) ? $options['scope'] : '';
+        
         if($splitCount>1)
         {
             $controller = $resources[$splitCount - 1];
@@ -157,7 +167,7 @@ class Resource extends \lithium\core\StaticObject {
             }
         }else
         {
-            $resource = Inflector::tableize($resource);
+            $resource = strtolower(Inflector::slug($resource));
             $controller = $resource;
             $resource = Inflector::underscore($resource);
         }
@@ -167,6 +177,7 @@ class Resource extends \lithium\core\StaticObject {
 		if (isset($options['types'])) {
 			$types = $options['types'] + $types;
 		}
+
 
 		if (isset($options['except'])) {
 			foreach (array_intersect((array) $options['except'], array_keys($types)) as $k) {
@@ -185,10 +196,19 @@ class Resource extends \lithium\core\StaticObject {
 		$configs = array();
 		foreach ($types as $action => $params) {
 			$config = array(
-				'template' => String::insert($params['template'], array('resource' => $resource)),
-				'params' => $params['params'] + array('controller' => $controller, 'action' => $action)
+				'template' => $scope.String::insert($params['template'], array('resource' => $resource)),
+				'params' => $params['params'] + array('controller' => $controller, 'action' => isset($params['action']) ? $params['action'] : $action)
 			);
 			$configs[] = $config;
+
+            if (isset($params['type_support']) && $params['type_support']) {
+                $config = array(
+                    'template' => $scope.String::insert($params['template'].'(.{:type:\w+})?', array('resource' => $resource)),
+                    'params' => $params['params'] + array('controller' => $controller, 'action' => isset($params['action']) ? $params['action'] : $action),
+                );
+                $configs[] = $config;
+            }
+
 		}
 
 		return $configs;

@@ -2,7 +2,8 @@
     "minimum-stability": "dev",
 	"name": "hibrid/li3_rest",
 	"type": "lithium-library",
-	"keywords": ["lithium", "rest"],
+	"keywords": ["rest", "routing", "lithium", "li3"],
+	"homepage": "https://github.com/hibrid/li3_rest/blob/master/README.md",
 	"authors": [
 		{
 			"name": "Michael Nitschinger"
