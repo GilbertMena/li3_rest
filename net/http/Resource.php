@@ -114,6 +114,10 @@ class Resource extends \lithium\core\StaticObject {
 		'delete' => array(
 			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})?',
 			'params' => array('http:method' => 'DELETE')
+		),
+		'bulk' => array(
+			'template' => '/{:resource}/bulk',
+			'params' => array('http:method' => 'POST')
 		)
 	);
 
@@ -140,8 +144,15 @@ class Resource extends \lithium\core\StaticObject {
 	 * @param string $resource The name of the resource
 	 * @param array $options
 	 */
+
 	public static function bind($resource, $options = array()) {
-		$resource = Inflector::tableize($resource);
+		$resources = explode('/', $resource);
+		$controller = $resources[count($resources) - 1];
+		$resource = Inflector::underscore($controller);
+		for ($i = count($resources) - 2; $i >= 0; $i--) {
+			$resource = Inflector::underscore($resources[$i]).'/{:'.Inflector::underscore($resources[$i]).'_id:[0-9a-f]{24}|[0-9]+}/'.$resource;
+		}
+
 		$types = static::$_types;
 
 		if (isset($options['types'])) {
@@ -166,7 +177,7 @@ class Resource extends \lithium\core\StaticObject {
 		foreach ($types as $action => $params) {
 			$config = array(
 				'template' => String::insert($params['template'], array('resource' => $resource)),
-				'params' => $params['params'] + array('controller' => $resource, 'action' => $action)
+				'params' => $params['params'] + array('controller' => $controller, 'action' => $action)
 			);
 			$configs[] = $config;
 		}

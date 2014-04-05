@@ -1,5 +1,4 @@
 {
-
     "minimum-stability": "dev",
 	"name": "nervetattoo/li3_rest",
 	"type": "lithium-library",
@@ -15,5 +14,6 @@
 	"require": {
 		"php": ">=5.3.6",
 		"composer/installers": "dev-master"
-	}
+	},
+    "description": "This plugin allows you to quickly declare all of the common routes for a given resourceful controller."
 }
