@@ -47,6 +47,7 @@ This will generate a bunch of routes. If you want to list them, you can use the 
 	/posts(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}/edit        {"controller":"posts","action":"edit"}
 	/posts(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})* {"controller":"posts","action":"update"}
 	/posts(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})* {"controller":"posts","action":"delete"}
+	/posts(/v{:version:\d+(\.\d+)?})?/bulk(.{:type:\w+})* {"controller":"posts","action":"bulk"}
  
 This routes look complex in the first place, but they try to be as flexible as possible. You can pass 
 all default ids (both MongoDB and for relational databases) and always an optional type (like `json`).
@@ -59,6 +60,7 @@ With the default resource activated, you can use the following URIs.
 	GET /posts/1234/edit => Edit the post with the ID 1234 (maybe a HTML form)
 	PUT /posts/1234 or /posts/1234.json => Edit the post with the ID 1234 (has the form data attached)
 	DELETE /posts/1234 or /posts/1234.json => Deletes the post with the ID 1234
+	POST /posts/bulk or /posts/bulk.json => Useful for bulk operations also an example on adding more routes
 	
 Using versioning in the request:
 You can request using v1 or v1.0 right after the resource name and it will pass the number as the parameter version
@@ -72,10 +74,23 @@ The versions are dynamically converted to matching action names in your controll
 	
 If the version is not passed and you don't version any methods, it will default to normal action/method name.
 
-If version is ommitted from the resource request, it will parse all the method/action names adn execute the latest version (highest version number).  
+If version is ommitted from the resource request, it will parse all the method/action names and execute the latest version (highest version number).  
 
-Note: as this plugin is currently in the making, I'll add more documentation as soon as the api and generated 
-routes have stableized.
+If you want to create routes using linked models. You can add the following to `app/config/routes.php`:
+	
+	Router::resource('Post/Comment') 
+	
+You will get a route like this:
+
+	/post/{:post_id:[0-9a-f]{24}|[0-9]+}/comment/{:id:[0-9a-f]{24}|[0-9]+}/edit  {"controller":"comment","action":"edit"}
+	
+Note that the above route passes the variable post_id in addition to id to the "edit" action of the "comment" controller.
+
+The equivalent of the above call with versioning is:
+
+	/post/{:post_id:[0-9a-f]{24}|[0-9]+}/comment/v1/{:id:[0-9a-f]{24}|[0-9]+}/edit  {"controller":"comment","action":"edit_1"}
+
+The thing to remember is that you're versioning the action in the controller (which controls the interface of the call) so the first parameter (post_id) does not need versioning.  This is there for readability ease and nothing more since the passing of linked data can be accomplished in the data passed into the call.
 
 ## Contributing
 Feel free to fork the plugin and send in pull requests. If you find any bugs or need a feature that is not implemented, open a ticket.
