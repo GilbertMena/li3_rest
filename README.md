@@ -74,10 +74,19 @@ The versions are dynamically converted to matching action names in your controll
 	
 If the version is not passed and you don't version any methods, it will default to normal action/method name.
 
-If version is ommitted from the resource request, it will parse all the method/action names adn execute the latest version (highest version number).  
+If version is ommitted from the resource request, it will parse all the method/action names and execute the latest version (highest version number).  
 
-Note: as this plugin is currently in the making, I'll add more documentation as soon as the api and generated 
-routes have stableized.
+If you want to create routes using linked models. You can add the following to `app/config/routes.php`:
+	
+	Router::resource('Post/Comment') 
+	
+You will get a route like this:
+
+	/post/{:post_id:[0-9a-f]{24}|[0-9]+}/comment/{:id:[0-9a-f]{24}|[0-9]+}/edit  {"controller":"comment","action":"edit"}
+	
+Note that the above route passes the variable post_id in addition to id to the "edit" action of the "comment" controller.
+
+
 
 ## Contributing
 Feel free to fork the plugin and send in pull requests. If you find any bugs or need a feature that is not implemented, open a ticket.
