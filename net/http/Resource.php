@@ -147,12 +147,19 @@ class Resource extends \lithium\core\StaticObject {
 
 	public static function bind($resource, $options = array()) {
 		$resources = explode('/', $resource);
-		$controller = $resources[count($resources) - 1];
-		$resource = Inflector::underscore($controller);
-		for ($i = count($resources) - 2; $i >= 0; $i--) {
-			$resource = Inflector::underscore($resources[$i]).'/{:'.Inflector::underscore($resources[$i]).'_id:[0-9a-f]{24}|[0-9]+}/'.$resource;
-		}
-
+        $splitCount = count($resources);
+        if($splitCount>1)
+        {
+            $controller = $resources[$splitCount - 1];
+            $resource = Inflector::underscore($controller);
+            for ($i = $splitCount - 2; $i >= 0; $i--) {
+                $resource = Inflector::underscore($resources[$i]).'/{:'.Inflector::underscore($resources[$i]).'_id:[0-9a-f]{24}|[0-9]+}/'.$resource;
+            }
+        }else
+        {
+            $resource = Inflector::tableize($resource);
+        }
+        
 		$types = static::$_types;
 
 		if (isset($options['types'])) {
@@ -174,6 +181,11 @@ class Resource extends \lithium\core\StaticObject {
 		}
 
 		$configs = array();
+        if($splitCount==1)
+        {
+            $controller = $resource;
+            $resource = Inflector::underscore($resource);
+        }
 		foreach ($types as $action => $params) {
 			$config = array(
 				'template' => String::insert($params['template'], array('resource' => $resource)),
