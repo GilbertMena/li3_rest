@@ -116,7 +116,7 @@ class Resource extends \lithium\core\StaticObject {
 			'params' => array('http:method' => 'DELETE')
 		),
 		'bulk' => array(
-			'template' => '/{:resource}/bulk',
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/bulk(.{:type:\w+})?',
 			'params' => array('http:method' => 'POST')
 		)
 	);
@@ -158,6 +158,8 @@ class Resource extends \lithium\core\StaticObject {
         }else
         {
             $resource = Inflector::tableize($resource);
+            $controller = $resource;
+            $resource = Inflector::underscore($resource);
         }
         
 		$types = static::$_types;
@@ -181,11 +183,6 @@ class Resource extends \lithium\core\StaticObject {
 		}
 
 		$configs = array();
-        if($splitCount==1)
-        {
-            $controller = $resource;
-            $resource = Inflector::underscore($resource);
-        }
 		foreach ($types as $action => $params) {
 			$config = array(
 				'template' => String::insert($params['template'], array('resource' => $resource)),

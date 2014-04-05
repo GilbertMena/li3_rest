@@ -1,6 +1,6 @@
 {
     "minimum-stability": "dev",
-	"name": "nervetattoo/li3_rest",
+	"name": "hibrid/li3_rest",
 	"type": "lithium-library",
 	"keywords": ["lithium", "rest"],
 	"authors": [
