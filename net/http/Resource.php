@@ -167,7 +167,7 @@ class Resource extends \lithium\core\StaticObject {
             }
         }else
         {
-            $resource = strtolower(Inflector::slug($resource));
+            $resource = Inflector::pluralize(strtolower(Inflector::slug($resource)));
             $controller = $resource;
             $resource = Inflector::underscore($resource);
         }
