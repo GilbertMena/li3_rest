@@ -63,6 +63,13 @@ With the default resource activated, you can use the following URIs.
 	DELETE /posts/1234 or /posts/1234.json => Deletes the post with the ID 1234
 	POST /posts/bulk or /posts/bulk.json => Useful for bulk operations also an example on adding more routes
 	
+ 
+
+
+## Advanced usage
+
+### Versioning
+
 Using versioning in the request:
 You can request using v1 or v1.0 right after the resource name and it will pass the number as the parameter version
 
@@ -75,7 +82,9 @@ The versions are dynamically converted to matching action names in your controll
 	
 If the version is not passed and you don't version any methods, it will default to normal action/method name.
 
-If version is ommitted from the resource request, it will parse all the method/action names and execute the latest version (highest version number).  
+If version is ommitted from the resource request, it will parse all the method/action names and execute the latest version (highest version number). 
+
+### Linked models
 
 If you want to create routes using linked models. You can add the following to `app/config/routes.php`:
 	
@@ -92,6 +101,30 @@ The equivalent of the above call with versioning is:
 	/post/{:post_id:[0-9a-f]{24}|[0-9]+}/comment/v1/{:id:[0-9a-f]{24}|[0-9]+}/edit  {"controller":"comment","action":"edit_1"}
 
 The thing to remember is that you're versioning the action in the controller (which controls the interface of the call) so the first parameter (post_id) does not need versioning.  This is there for readability ease and nothing more since the passing of linked data can be accomplished in the data passed into the call.
+
+### Scoping
+
+If you want to create routes using a scope. You can add the following to `app/config/routes.php`:
+	
+	Router::resource('Post/Comment',array('scope'=>'Articles')) 
+
+Will generate a route that lookes like this:
+
+	/articles/post/{:post_id:[0-9a-f]{24}|[0-9]+}/comment/{:id:[0-9a-f]{24}|[0-9]+}/edit  {"controller":"comment","action":"edit"}
+	
+The scope is passed into the action as a parameter.  You can use this to further define the template you want to use or anything else you want.  It helps with readability much like the linked models feature. This is lazy loaded so the computational expense of the regex is not in play when the scope option is not added.  Also, the value of scope is always converted to lower case.
+
+### Limiting Created Routes
+
+There will be cases where you don't want all the routes created.  You can either exclude certain routes or when easier, create only certain routes.
+
+If you want to only generate the add and show routes, you can add the following to `app/config/routes.php`:
+	
+	Router::resource('Post/Comment',array('only'=>array('add','show'))) 
+	
+If you want to exclude the add and show routes, you can add the following to `app/config/routes.php`:
+	
+	Router::resource('Post/Comment',array('except'=>array('add','show'))) 
 
 ## Contributing
 Feel free to fork the plugin and send in pull requests. If you find any bugs or need a feature that is not implemented, open a ticket.
