@@ -1,9 +1,19 @@
 {
-    "name": "mehlah/li3_rest",
-    "description": "This plugin allows you to quickly declare all of the common routes for a given resourceful controller.",
-    "type": "lithium-library",
-    "require": {
-        "composer/installers": "*"
-    },
-    "minimum-stability": "dev"
+
+    "minimum-stability": "dev",
+	"name": "nervetattoo/li3_rest",
+	"type": "lithium-library",
+	"keywords": ["lithium", "rest"],
+	"authors": [
+		{
+			"name": "Michael Nitschinger"
+		},
+		{
+			"name": "Raymond Julin"
+		}
+	],
+	"require": {
+		"php": ">=5.3.6",
+		"composer/installers": "dev-master"
+	}
 }

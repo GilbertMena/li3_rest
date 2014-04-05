@@ -140,7 +140,7 @@ class Resource extends \lithium\core\StaticObject {
 	 * @param string $resource The name of the resource
 	 * @param array $options
 	 */
-	public static function connect($resource, $options = array()) {
+	public static function bind($resource, $options = array()) {
 		$resource = Inflector::tableize($resource);
 		$types = static::$_types;
 
@@ -174,6 +174,7 @@ class Resource extends \lithium\core\StaticObject {
 		return $configs;
 	}
 }
+
 
 Dispatcher::applyFilter('_callable', function($self, $params, $chain) {
 
@@ -243,3 +244,4 @@ Dispatcher::applyFilter('_call', function($self, $params, $chain) {
 });
 
 ?>
+
