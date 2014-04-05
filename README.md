@@ -51,7 +51,8 @@ This will generate a bunch of routes. If you want to list them, you can use the 
 
  
 This routes look complex in the first place, but they try to be as flexible as possible. You can pass 
-all default ids (both MongoDB and for relational databases) and always an optional type (like `json`).
+all default ids (both MongoDB and for relational databases) and always an optional type (like `json`).  If you want, you can set the `type_support` through the options for the resource in your routes file to false to not create the routes with the optional regex.
+
 With the default resource activated, you can use the following URIs.
 
 	GET /posts or /posts.json => Show a list of available posts
@@ -125,6 +126,19 @@ If you want to only generate the add and show routes, you can add the following 
 If you want to exclude the add and show routes, you can add the following to `app/config/routes.php`:
 	
 	Router::resource('Post/Comment',array('except'=>array('add','show'))) 
+
+### Using Types
+
+The types for the each resource are optional if the type is supported, you will always get two routes created. One with regex for the type and one without.  By default, the optional type regex route is created since its the simplest implemantation. 
+
+If you want to disable passing in the types, because you will always return a certain data type (e.g. json) or you want to be hard core and use auto negotiation (see below), you have two options:
+
+1. You can use the options for the resource (recommended). You can add the following to `app/config/routes.php`:
+	
+	`Router::resource('Post/Comment',array('type_support'=>false)) `
+	
+2. You can disable the type for all routes. You can change the `type_support` in `li3_rest/net/http/Resource.php` to `false`.  If you do, you can overwrite the default behavior by using method 1 and setting `type_support` to `true`. 
+
 
 ## Contributing
 Feel free to fork the plugin and send in pull requests. If you find any bugs or need a feature that is not implemented, open a ticket.
