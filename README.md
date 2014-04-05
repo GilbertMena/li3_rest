@@ -94,3 +94,63 @@ The thing to remember is that you're versioning the action in the controller (wh
 
 ## Contributing
 Feel free to fork the plugin and send in pull requests. If you find any bugs or need a feature that is not implemented, open a ticket.
+
+
+## Autonegotiation content (REQUEST type == RESPOND type)
+If you need serve content by recognize headers params you must set negotiate = true params
+
+class PostsController extends \lithium\action\Controller {
+
+    protected function _init() {
+		$this->_render['negotiate'] = true;
+		parent::_init();
+	}
+
+after that, when client send request to our service for eg. `DELETE /posts/1234` witch headers like that
+    
+    `Accept: application/json`
+    `X-Requested-With: XMLHttpRequest`
+
+li3 serve json view, but you should configure Media class (in /app/config/bootstrap/media/php) like this
+
+    /**
+     * Json media response for ExtJs specifid format Request must have 2 important flags in headers:
+     * `Accept application/json`
+     * `X-Requested-With XMLHttpRequest`
+     * @link http://www.sencha.com/learn/Manual:RESTful_Web_Services#HTTP_Status_Codes
+     * @link http://json.org/JSONRequest.html
+     */
+    Media::type('extjs', array('application/json', 'application/jsonrequest'), array(
+        'view' => 'lithium\template\View',
+    	'layout' => false,
+    	'conditions' => array('ajax' => true),
+    	'encode' => function($data, $handler, &$response) {
+    		if (!isset($data['success'])) {
+    			$data['success'] = true;
+    		}
+    		
+    		if (!isset($data['errors']) && $data['success'] === true) {
+    			$data['errors'] = array();
+    			if (!isset($data['data'][0]) && !is_string(key($data['data']))) {
+    				// reorder array index (from 0 to n)
+    				$data['data'] = array_values($data['data']);
+    			}
+    		}
+    
+    		if (is_array($data['data']) && count($data['errors'])) {
+    			$errors = array();
+    			foreach ($data['errors'] as $id => $val) {
+    				if (is_array($val)) {
+    					$errors[$id] = implode(' ', $val);
+    				}
+    			}
+    			$data['errors'] = $errors;
+    		}
+    		return json_encode($data);
+    	},
+    	'decode' => function($data, $handler) {
+    		return json_decode($data);
+    	}
+    ));
+
+this eg. works for ExtJs REST interface.
