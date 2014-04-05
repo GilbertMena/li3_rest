@@ -47,6 +47,7 @@ This will generate a bunch of routes. If you want to list them, you can use the 
 	/posts(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}/edit        {"controller":"posts","action":"edit"}
 	/posts(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})* {"controller":"posts","action":"update"}
 	/posts(/v{:version:\d+(\.\d+)?})?/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})* {"controller":"posts","action":"delete"}
+	/posts(/v{:version:\d+(\.\d+)?})?/bulk(.{:type:\w+})* {"controller":"posts","action":"bulk"}
  
 This routes look complex in the first place, but they try to be as flexible as possible. You can pass 
 all default ids (both MongoDB and for relational databases) and always an optional type (like `json`).
@@ -59,6 +60,7 @@ With the default resource activated, you can use the following URIs.
 	GET /posts/1234/edit => Edit the post with the ID 1234 (maybe a HTML form)
 	PUT /posts/1234 or /posts/1234.json => Edit the post with the ID 1234 (has the form data attached)
 	DELETE /posts/1234 or /posts/1234.json => Deletes the post with the ID 1234
+	POST /posts/bulk or /posts/bulk.json => Useful for bulk operations also an example on adding more routes
 	
 Using versioning in the request:
 You can request using v1 or v1.0 right after the resource name and it will pass the number as the parameter version
