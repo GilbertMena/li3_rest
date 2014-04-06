@@ -85,6 +85,12 @@ If the version is not passed and you don't version any methods, it will default 
 
 If version is ommitted from the resource request, it will parse all the method/action names and execute the latest version (highest version number). 
 
+The last thing to note is that the version number is passed as the `version` parameter.  If only the default method name is used, the version is passed as the number zero. Otherwise it matches the determined version. 
+
+###### For example:
+
+Suppose you have two actions defined. One called `show` and another `show_1_1`. You then receive a request that matches the show action without any version defined, the version number will be automatically determined to be `1.1` and `show_1_1` will be executed.
+
 ### Linked models
 
 If you want to create routes using linked models. You can add the following to `app/config/routes.php`:
