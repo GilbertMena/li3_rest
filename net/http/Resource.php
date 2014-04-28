@@ -125,7 +125,12 @@ class Resource extends \lithium\core\StaticObject {
 			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/bulk',
 			'params' => array('http:method' => 'POST'),
 			'type_support' => true
-		)
+		),
+        'find' => array(
+			'template' => '/{:resource}(/v{:version:\d+(\.\d+)?})?/find/({:emailAddress:.+})',
+			'params' => array('http:method' => 'GET'),
+			'type_support' => true
+		),
 	);
 
 	/**
@@ -200,13 +205,15 @@ class Resource extends \lithium\core\StaticObject {
 				'params' => $params['params'] + array('controller' => $controller, 'action' => isset($params['action']) ? $params['action'] : $action)
 			);
 			$configs[] = $config;
-
-            if (isset($params['type_support']) && $params['type_support']) {
-                $config = array(
-                    'template' => $scope.String::insert($params['template'].'(.{:type:\w+})?', array('resource' => $resource)),
-                    'params' => $params['params'] + array('controller' => $controller, 'action' => isset($params['action']) ? $params['action'] : $action),
-                );
-                $configs[] = $config;
+            
+            if (@$options['type_support']!=false) {
+                if ((isset($params['type_support']) && $params['type_support']) || @$options['type_support']) {
+                    $config = array(
+                        'template' => $scope.String::insert($params['template'].'(.{:type:\w+})?', array('resource' => $resource)),
+                        'params' => $params['params'] + array('controller' => $controller, 'action' => isset($params['action']) ? $params['action'] : $action),
+                    );
+                    $configs[] = $config;
+                }
             }
 
 		}
